@@ -10,7 +10,7 @@ with open("secrets.json") as f:
 def summary_bittrex(coin):
 	pair = f'BTC-{coin}'
 	url = f'https://bittrex.com/api/v1.1/public/getmarketsummary?market={pair}'
-	response = requests.request("GET", url)
+	response = requests.request("GET", url, timeout=60)
 	resp = response.json()
 	if not resp["success"]:
 		raise Exception(f'Bittrex: {resp["message"]} (Pair: {pair})')

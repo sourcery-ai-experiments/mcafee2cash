@@ -52,7 +52,7 @@ class Twitter:
 		try:
 			urls = [x["media_url"].replace("\\", "") for x in tweet_json["entities"]["media"] if x["type"] == "photo"]
 			for url in urls:
-				response = requests.get(url)
+				response = requests.get(url, timeout=60)
 				img = Image.open(io.BytesIO(response.content))
 				# Extract text from image
 				img_text = pytesseract.image_to_string(img)
