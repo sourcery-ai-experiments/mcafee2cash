@@ -16,7 +16,7 @@ def get_coins_bittrex():
 		
 	endpoint = "https://bittrex.com/api/v1.1/public/getmarkets"
 	try:
-		markets = requests.get(endpoint).json()["result"]
+		markets = requests.get(endpoint, timeout=60).json(timeout=60)["result"]
 		for market in markets:
 			symbol = market["MarketCurrency"]
 			name = market["MarketCurrencyLong"].lower()
