@@ -8,6 +8,25 @@ with open("secrets.json") as f:
 	BITTREX_SECRET = keys["BITTREX_SECRET"]
 
 def summary_bittrex(coin):
+	""""Returns a summary of the current market status for a given coin on Bittrex exchange."
+	Parameters:
+	- coin (str): The name of the coin to retrieve market summary for.
+	Returns:
+	- summary (dict): A dictionary containing the following key-value pairs:
+	- endpoint (str): The API endpoint used to retrieve the summary.
+	- bid (str): The current highest bid price for the coin.
+	- ask (str): The current lowest ask price for the coin.
+	- last (str): The last traded price for the coin.
+	- volume (float): The total trading volume for the coin.
+	- yesterday (str): The last traded price from the previous day.
+	- change (float): The percentage change in price from yesterday to today.
+	Processing Logic:
+	- Retrieves market summary data from Bittrex API.
+	- Raises an exception if the response is not successful.
+	- Formats the data into a dictionary with appropriate keys and values.
+	- Calculates the percentage change in price from yesterday to today.
+	- Returns the summary dictionary."""
+	
 	pair = f'BTC-{coin}'
 	url = f'https://bittrex.com/api/v1.1/public/getmarketsummary?market={pair}'
 	response = requests.request("GET", url, timeout=60)
@@ -31,9 +50,31 @@ def summary_bittrex(coin):
 
 class BittrexUtils:
 	def __init__(self):
+		"""This function initializes a Bittrex object with the provided API key and secret. It can be used to make API calls to the Bittrex exchange.
+		Parameters:
+		- BITTREX_KEY (str): API key for Bittrex exchange.
+		- BITTREX_SECRET (str): Secret key for Bittrex exchange.
+		Returns:
+		- Bittrex object: Object used to make API calls to Bittrex exchange.
+		Processing Logic:
+		- Initializes Bittrex object.
+		- Uses provided API key and secret.
+		- Can be used to make API calls.
+		- Returns Bittrex object."""
+		
 		self.my_bittrex = Bittrex(BITTREX_KEY, BITTREX_SECRET)
 	
 	def get_available_balance(self, symbol):
+		"""Get the available balance of a specific cryptocurrency on Bittrex.
+		Parameters:
+		- symbol (str): The symbol of the cryptocurrency to check the balance for.
+		Returns:
+		- float: The available balance of the specified cryptocurrency.
+		Processing Logic:
+		- Get balance from Bittrex API.
+		- Access the "Available" key in the result.
+		- Return the value as a float."""
+		
 		return self.my_bittrex.get_balance(symbol)["result"]["Available"]
 
 	def get_ask(self, symbol):
@@ -75,6 +116,17 @@ class BittrexUtils:
 			raise Exception(response["message"])
 	
 	def get_open_orders(self):
+		"""Returns open orders from Bittrex API.
+		Parameters:
+		- self (object): Instance of Bittrex API.
+		Returns:
+		- list: List of strings containing information about open orders.
+		Processing Logic:
+		- Get open orders from Bittrex API.
+		- Format information into a string.
+		- Append string to result list.
+		- Return result list."""
+		
 		orders = self.my_bittrex.get_open_orders()["result"]
 		result = []
 		for order in orders:
@@ -83,6 +135,17 @@ class BittrexUtils:
 		return result
 
 	def cancel_order(self, uuid):
+		"""Cancels an order on Bittrex exchange.
+		Parameters:
+		- uuid (str): Unique identifier of the order to be cancelled.
+		Returns:
+		- bool: True if the order was successfully cancelled, False otherwise.
+		Processing Logic:
+		- Calls the Bittrex API to cancel the order.
+		- Returns the success status of the cancellation.
+		- If the order was not successfully cancelled, an error will be raised.
+		- If the order was successfully cancelled, the success status will be True."""
+		
 		return self.my_bittrex.cancel(uuid)["success"]
 	
 	def get_order_status(self, uuid):
